@@ -4,7 +4,7 @@ import yt_dlp
 import os
 
 # تۆکنەکەت لێرە دابنێ
-TOKEN = "8778519003:AAEL_Xu8AB3B8d-MQXvjcI_9 Sl__mTjtukw"
+TOKEN = "8778519003:AAEL_Xu8AB3B8d-MQXvjcI_9Sl__mTjtukw"
 
 # فرمانی /start بۆ ناردنی نامەی بەخێرهاتن و دوگمە
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
