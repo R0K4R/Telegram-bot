@@ -4,20 +4,15 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
 import yt_dlp
 
-# تۆکنەکەت لێرە لە نێوان دوو کەوانەکە دابنێ
 TOKEN = "8778519003:AAEFy9BRsvFsI_tLB2B-vcRpIjs3DhB_hyI"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("سڵاو! لینکێکی یوتیوب بنێرە بۆ ئەوەی بە شێوەی موزیک (MP3) بۆت دابگرم. 🎵")
+    await update.message.reply_text("سڵاو! لینکێکی یوتیوب بنێرە تا وەک موزیک بۆت دابگرم. 🎵")
 
 async def download_audio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     url = update.message.text
-    if not url.startswith(("http://", "https://")):
-        return
+    msg = await update.message.reply_text("⏳ خەریکم تاقی دەکەمەوە... تکایە چاوەڕێبە.")
 
-    msg = await update.message.reply_text("⏳ خەریکم وەک موزیک ئامادەی دەکەم... تکایە چاوەڕێبە.")
-
-    # ڕێکخستنی زیرەک بۆ داگرتنی موزیک و تێپەڕاندنی بلۆک
     ydl_opts = {
         'format': 'bestaudio/best',
         'postprocessors': [{
@@ -25,43 +20,35 @@ async def download_audio(update: Update, context: ContextTypes.DEFAULT_TYPE):
             'preferredcodec': 'mp3',
             'preferredquality': '192',
         }],
-        'outtmpl': 'music.%(ext)s',
-        # ئەم بەشە وای لێ دەکات یوتیوب وا بزانێت تۆ مۆبایلی نەک سێرڤەر
-        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-        'nocheckcertificate': True,
+        'outtmpl': 'music.mp3',
+        # ئەم بەشانە بۆ تێپەڕاندنی بلۆکە
         'quiet': True,
         'no_warnings': True,
+        'source_address': '0.0.0.0',
+        'force_ipv4': True,
+        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
     }
 
     try:
-        # بەکارهێنانی loop بۆ ئەوەی سێرڤەرەکە نەوەستێت
-        loop = asyncio.get_event_loop()
-        await loop.run_in_executor(None, lambda: yt_dlp.YoutubeDL(ydl_opts).download([url]))
-        
-        file_path = 'music.mp3'
-
-        if os.path.exists(file_path):
-            await msg.edit_text("📤 خەریکم موزیکەکە بەرز دەکەمەوە...")
-            with open(file_path, 'rb') as audio:
-                await update.message.reply_audio(
-                    audio=audio, 
-                    title="گۆرانییەکە ئامادەیە",
-                    performer="Save_Kurd_Bot"
-                )
-            os.remove(file_path)
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
+            
+        if os.path.exists('music.mp3'):
+            await msg.edit_text("📤 خەریکم بەرزی دەکەمەوە...")
+            with open('music.mp3', 'rb') as audio:
+                await update.message.reply_audio(audio=audio, title="تەواو بوو ✅")
+            os.remove('music.mp3')
             await msg.delete()
         else:
-            await msg.edit_text("❌ ببورە، فایلەکە دروست نەکرا. تکایە لینکێکی تر تاقی بکەرەوە.")
+            await msg.edit_text("❌ یوتیوب هێشتا ڕێگری دەکات. کەمێکی تر تاقی بکەرەوە.")
 
     except Exception as e:
         print(f"Error: {e}")
-        await msg.edit_text("❌ یوتیوب ڕێگری لە داگرتنی ئەم لینکە کرد. کەمێکی تر هەوڵ بدەرەوە.")
+        await msg.edit_text("❌ ببورە، یوتیوب سێرڤەرەکەی بلۆک کردووە. لینکێکی تر تاقی بکەرەوە.")
 
 if __name__ == '__main__':
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, download_audio))
-    print("بۆتەکە دەستی پێکرد...")
     app.run_polling()
-    
     
