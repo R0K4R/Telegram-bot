@@ -5,7 +5,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, fil
 import yt_dlp
 
 # --- زانیارییەکان ---
-TOKEN = "8778519003:AAEFy9BRsvFsI_tLB2B-vcRpljs3DhB_hyI"
+TOKEN = "8778519003:AAEFy9BRsvFsI_tLB2B-vcRpIjs3DhB_hyI"
 CHANNEL_ID = "@hamaesmael"
 CHANNEL_URL = "https://t.me/hamaesmael"
 ADMIN_ID = 58473622
