@@ -3,6 +3,7 @@ import requests
 import yt_dlp
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, MessageHandler, CommandHandler, CallbackQueryHandler, filters, ContextTypes
+from telegram.error import MessageNotModified
 
 TOKEN = "8778519003:AAEFy9BRsvFsI_tLB2B-vcRpIjs3DhB_hyI" # تۆکنەکە ڕاستەوخۆ لێرە دانراوە
 
@@ -75,7 +76,10 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 info = ydl.extract_info(url, download=True)
                 filename = ydl.prepare_filename(info)
 
-            await msg.edit_text("📤 ناردن...")
+            try:
+                await msg.edit_text("📤 ناردن...")
+            except MessageNotModified: # Handle the specific error
+                pass
 
             if query.data == "mp3":
                 await query.message.reply_audio(audio=open(filename, 'rb'))
