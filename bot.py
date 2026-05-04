@@ -3,7 +3,7 @@ import requests
 import yt_dlp
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, MessageHandler, CommandHandler, CallbackQueryHandler, filters, ContextTypes
-from telegram.error import MessageNotModified
+# from telegram.error import MessageNotModified # ئەمە لابراوە چونکە هەڵەی ImportErrorی دەدا
 
 TOKEN = "8778519003:AAEFy9BRsvFsI_tLB2B-vcRpIjs3DhB_hyI" # تۆکنەکە ڕاستەوخۆ لێرە دانراوە
 
@@ -78,8 +78,11 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             try:
                 await msg.edit_text("📤 ناردن...")
-            except MessageNotModified: # Handle the specific error
-                pass
+            except Exception as e: # گۆڕدرا بۆ Exception گشتی
+                if "Message is not modified" in str(e): # پشکنینی دەقی هەڵەکە
+                    pass
+                else:
+                    raise # ئەگەر هەڵەیەکی تر بوو، دووبارە فڕێی بدە
 
             if query.data == "mp3":
                 await query.message.reply_audio(audio=open(filename, 'rb'))
