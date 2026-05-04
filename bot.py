@@ -4,7 +4,7 @@ import yt_dlp
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, MessageHandler, CommandHandler, CallbackQueryHandler, filters, ContextTypes
 
-TOKEN = os.getenv("8778519003:AAEFy9BRsvFsI_tLB2B-vcRpIjs3DhB_hyI")
+TOKEN = "8778519003:AAEFy9BRsvFsI_tLB2B-vcRpIjs3DhB_hyI" # تۆکنەکە ڕاستەوخۆ لێرە دانراوە
 
 # start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -22,8 +22,7 @@ async def handle(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("🎥 Best", callback_data="best")],
         [InlineKeyboardButton("📺 720p", callback_data="720")],
         [InlineKeyboardButton("📱 360p", callback_data="360")],
-        [InlineKeyboardButton("🎧 MP3", callback_data="mp3")]
-    ]
+        [InlineKeyboardButton("🎧 MP3", callback_data="mp3")]]
 
     await update.message.reply_text(
         "هەڵبژێرە 👇",
